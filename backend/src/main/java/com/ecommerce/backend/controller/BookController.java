@@ -1,40 +1,63 @@
 package com.ecommerce.backend.controller;
 
-import com.ecommerce.backend.model.Book;
-import com.ecommerce.backend.service.BookService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import com.ecommerce.backend.entity.Book;
+import com.ecommerce.backend.repository.BookRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "http://localhost:4200") // Allow Angular frontend
-@RequiredArgsConstructor
-@Slf4j
 public class BookController {
 
-    private final BookService bookService;
+    private final BookRepository repository;
 
+    public BookController(BookRepository repository) {
+        this.repository = repository;
+    }
+
+    // GET ALL BOOKS
     @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookService.getAllBooks();
-        log.info("Fetching all books. Found {} books.", books.size());
-        return ResponseEntity.ok(books);
+    public List<Book> getAllBooks() {
+        return repository.findAll();
     }
 
+    // GET BOOK BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
-        return bookService.getBookById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public Optional<Book> getBookById(@PathVariable Long id) {
+        return repository.findById(id);
     }
 
+    // ADD NEW BOOK
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
-        Book createdBook = bookService.createBook(book);
-        return ResponseEntity.status(201).body(createdBook);
+    public Book createBook(@RequestBody Book book) {
+        return repository.save(book);
+    }
+
+    // UPDATE BOOK
+    @PutMapping("/{id}")
+    public Book updateBook(@PathVariable Long id,
+                           @RequestBody Book updatedBook) {
+
+        Book book = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        book.setTitle(updatedBook.getTitle());
+        book.setAuthor(updatedBook.getAuthor());
+        book.setDescription(updatedBook.getDescription());
+        book.setPrice(updatedBook.getPrice());
+        book.setImageUrl(updatedBook.getImageUrl());
+        book.setStockQuantity(updatedBook.getStockQuantity());
+
+        return repository.save(book);
+    }
+
+    // DELETE BOOK
+    @DeleteMapping("/{id}")
+    public String deleteBook(@PathVariable Long id) {
+        repository.deleteById(id);
+        return "Book Deleted Successfully";
     }
 }
