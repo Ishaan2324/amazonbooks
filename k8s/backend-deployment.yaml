@@ -20,7 +20,7 @@ spec:
       containers:
       - name: backend
 
-        image: amazonbooks-backend:v1
+        image: chandra2324/amazonbooks-backend:latest
 
         imagePullPolicy: Never
 
