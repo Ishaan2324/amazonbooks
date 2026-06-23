@@ -1,6 +1,6 @@
 package com.ecommerce.backend.controller;
 
-import com.ecommerce.backend.entity.Book;
+import com.ecommerce.backend.model.Book;
 import com.ecommerce.backend.repository.BookRepository;
 import org.springframework.web.bind.annotation.*;
 
