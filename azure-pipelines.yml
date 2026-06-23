@@ -14,7 +14,7 @@ steps:
 - task: Docker@2
   inputs:
     command: buildAndPush
-    repository: amazonbooks-backend
+    repository: chandra2324/amazonbooks-backend
     dockerfile: backend/Dockerfile
     containerRegistry: dockerhub-service-connection
     tags: |
